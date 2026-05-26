@@ -8,6 +8,7 @@ import { archiveProduct, unarchiveProduct } from "@/app/actions/products";
 export default function HistoryPage({ product, movements: initialMovements }: { product: any, movements: any[] }) {
   const [movements, setMovements] = useState(initialMovements);
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
+  const [filterType, setFilterType] = useState<string>('ALL');
 
   const toggleSort = () => {
     const newOrder = sortOrder === 'desc' ? 'asc' : 'desc';
@@ -19,8 +20,12 @@ export default function HistoryPage({ product, movements: initialMovements }: { 
     }));
   };
 
-  // Preparamos los datos para exportar
-  const exportData = movements.map(m => ({
+  const filteredMovements = filterType === 'ALL' 
+    ? movements 
+    : movements.filter(m => m.type === filterType);
+
+  // Preparamos los datos para exportar filtrados
+  const exportData = filteredMovements.map(m => ({
     Fecha: new Date(m.createdAt).toLocaleString(),
     Tipo: m.type,
     Cantidad: m.quantity,
@@ -32,13 +37,22 @@ export default function HistoryPage({ product, movements: initialMovements }: { 
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Historial de {product.name}</h1>
         <div className="flex gap-2">
+          <select 
+            className="px-4 py-2 border rounded"
+            value={filterType} 
+            onChange={(e) => setFilterType(e.target.value)}
+          >
+            <option value="ALL">Todos</option>
+            <option value="IN">Entradas (IN)</option>
+            <option value="OUT">Salidas (OUT)</option>
+          </select>
           {product.isDeleted === 0 ? (
             <form action={async () => { await archiveProduct(product.id); }}>
-              <button type="submit" className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Archivar Producto</button>
+              <button type="submit" className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Archivar</button>
             </form>
           ) : (
             <form action={async () => { await unarchiveProduct(product.id); }}>
-              <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Desarchivar Producto</button>
+              <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Desarchivar</button>
             </form>
           )}
           <ExportButtons data={exportData} type={product.name} />
@@ -58,7 +72,7 @@ export default function HistoryPage({ product, movements: initialMovements }: { 
             </tr>
           </thead>
           <tbody>
-            {movements.map((m) => (
+            {filteredMovements.map((m) => (
               <tr key={m.id} className="border-b border-gray-100">
                 <td className="p-3">{new Date(m.createdAt).toLocaleString()}</td>
                 <td className="p-3">
