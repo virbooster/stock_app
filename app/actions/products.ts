@@ -28,7 +28,9 @@ export async function editProduct(formData: FormData) {
 
 export async function archiveProduct(id: number) {
   db.prepare("UPDATE Product SET isDeleted = 1, updatedAt = CURRENT_TIMESTAMP WHERE id = ?").run(id);
-  db.prepare("INSERT INTO Movement (productId, type, quantity, reason) VALUES (?, ?, ?, ?)").run(id, 'OUT', 0, 'Baja de producto');
+  // Eliminé la inserción de movimiento tipo 'OUT' con cantidad 0,
+  // ya que ahora solo queremos marcarlo como archivado sin alterar su stock.
+  db.prepare("INSERT INTO Movement (productId, type, quantity, reason) VALUES (?, ?, ?, ?)").run(id, 'OUT', 0, 'Baja de producto (Archivado)');
   redirect("/dashboard");
 }
 
