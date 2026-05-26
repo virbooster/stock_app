@@ -27,16 +27,16 @@ export async function editProduct(formData: FormData) {
 }
 
 export async function archiveProduct(id: number) {
+  const product = db.prepare("SELECT stock FROM Product WHERE id = ?").get(id) as any;
   db.prepare("UPDATE Product SET isDeleted = 1, updatedAt = CURRENT_TIMESTAMP WHERE id = ?").run(id);
-  // Eliminé la inserción de movimiento tipo 'OUT' con cantidad 0,
-  // ya que ahora solo queremos marcarlo como archivado sin alterar su stock.
-  db.prepare("INSERT INTO Movement (productId, type, quantity, reason) VALUES (?, ?, ?, ?)").run(id, 'OUT', 0, 'Baja de producto (Archivado)');
+  db.prepare("INSERT INTO Movement (productId, type, quantity, reason) VALUES (?, ?, ?, ?)").run(id, 'OUT', product.stock, 'Baja de producto (Archivado) - Stock guardado: ' + product.stock);
   redirect("/dashboard");
 }
 
 export async function unarchiveProduct(id: number) {
+  const product = db.prepare("SELECT stock FROM Product WHERE id = ?").get(id) as any;
   db.prepare("UPDATE Product SET isDeleted = 0, updatedAt = CURRENT_TIMESTAMP WHERE id = ?").run(id);
-  db.prepare("INSERT INTO Movement (productId, type, quantity, reason) VALUES (?, ?, ?, ?)").run(id, 'IN', 0, 'Desarchivado de producto');
+  db.prepare("INSERT INTO Movement (productId, type, quantity, reason) VALUES (?, ?, ?, ?)").run(id, 'IN', product.stock, 'Desarchivado de producto - Stock recuperado: ' + product.stock);
   redirect("/dashboard/archived");
 }
 
