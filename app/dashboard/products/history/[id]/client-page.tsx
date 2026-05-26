@@ -3,6 +3,7 @@ import { useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { ArrowUpDown } from "lucide-react";
 import { ExportButtons } from "@/components/ExportButtons";
+import { archiveProduct, unarchiveProduct } from "@/app/actions/products";
 
 export default function HistoryPage({ product, movements: initialMovements }: { product: any, movements: any[] }) {
   const [movements, setMovements] = useState(initialMovements);
@@ -30,7 +31,18 @@ export default function HistoryPage({ product, movements: initialMovements }: { 
     <DashboardLayout>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Historial de {product.name}</h1>
-        <ExportButtons data={exportData} type={product.name} />
+        <div className="flex gap-2">
+          {product.isDeleted === 0 ? (
+            <form action={async () => { await archiveProduct(product.id); }}>
+              <button type="submit" className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Archivar Producto</button>
+            </form>
+          ) : (
+            <form action={async () => { await unarchiveProduct(product.id); }}>
+              <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Desarchivar Producto</button>
+            </form>
+          )}
+          <ExportButtons data={exportData} type={product.name} />
+        </div>
       </div>
       
       <div className="bg-white p-6 shadow-sm rounded-lg border border-gray-200">
