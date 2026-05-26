@@ -16,7 +16,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ sea
         <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
         <div className="flex gap-2">
           <Link href="/dashboard/products/add" className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Nuevo Producto</Link>
-          <ExportButtons data={products} />
+          <ExportButtons data={products} type="stock" />
         </div>
       </div>
       

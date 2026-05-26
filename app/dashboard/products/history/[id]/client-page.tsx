@@ -30,7 +30,7 @@ export default function HistoryPage({ product, movements: initialMovements }: { 
     <DashboardLayout>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Historial de {product.name}</h1>
-        <ExportButtons data={exportData} />
+        <ExportButtons data={exportData} type="history" />
       </div>
       
       <div className="bg-white p-6 shadow-sm rounded-lg border border-gray-200">
