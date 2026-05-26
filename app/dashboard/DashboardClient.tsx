@@ -6,12 +6,17 @@ import { archiveProduct } from "@/app/actions/products";
 import Link from "next/link";
 import { ArrowUpDown } from "lucide-react";
 
-export default function DashboardPage({ initialProducts, query }: { initialProducts: any[], query: string }) {
+export default function DashboardClient({ initialProducts }: { initialProducts: any[] }) {
   const [products, setProducts] = useState(initialProducts);
   const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' } | null>(null);
+  const [search, setSearch] = useState("");
+
+  const filteredProducts = useMemo(() => {
+    return products.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
+  }, [products, search]);
 
   const sortedProducts = useMemo(() => {
-    let sortableItems = [...products];
+    let sortableItems = [...filteredProducts];
     if (sortConfig !== null) {
       sortableItems.sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
@@ -20,7 +25,7 @@ export default function DashboardPage({ initialProducts, query }: { initialProdu
       });
     }
     return sortableItems;
-  }, [products, sortConfig]);
+  }, [filteredProducts, sortConfig]);
 
   const requestSort = (key: string) => {
     let direction: 'asc' | 'desc' = 'asc';
@@ -41,8 +46,13 @@ export default function DashboardPage({ initialProducts, query }: { initialProdu
       </div>
       
       <form className="mb-6 relative w-full max-w-sm">
-        <input name="search" defaultValue={query} placeholder="Buscar producto..." className="p-2 border rounded w-full text-sm" />
-        {query && <a href="/dashboard" className="absolute right-2 top-2.5 text-gray-500 hover:text-gray-800 text-sm">✕</a>}
+        <input 
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Buscar producto..." 
+          className="p-2 border rounded w-full text-sm" 
+        />
+        {search && <button type="button" onClick={() => setSearch("")} className="absolute right-2 top-2.5 text-gray-500 hover:text-gray-800 text-sm">✕</button>}
       </form>
 
       <div className="bg-white p-6 shadow-sm rounded-lg border border-gray-200">
@@ -66,7 +76,7 @@ export default function DashboardPage({ initialProducts, query }: { initialProdu
                 <td className="p-2 flex gap-2 items-center">
                   <Link href={`/dashboard/products/edit/${product.id}`} className="text-blue-600 hover:underline text-sm">Editar</Link>
                   <Link href={`/dashboard/products/history/${product.id}`} className="text-purple-600 hover:underline text-sm">Historial</Link>
-                  <form action={async () => { "use server"; await archiveProduct(product.id); }} className="flex items-center">
+                  <form action={async () => { await archiveProduct(product.id); }} className="flex items-center">
                     <button type="submit" className="text-red-600 hover:underline text-sm">Archivar</button>
                   </form>
                 </td>
