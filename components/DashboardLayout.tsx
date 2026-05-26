@@ -13,6 +13,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <a href="/dashboard/movements" className="flex items-center gap-3 p-3 rounded hover:bg-gray-100 text-gray-700">
             <ArrowLeftRight size={20} /> Movements
           </a>
+          <a href="/dashboard/archived" className="flex items-center gap-3 p-3 rounded hover:bg-gray-100 text-gray-700">
+            <Package size={20} /> Archivados
+          </a>
           <form action={logout}>
             <button className="flex items-center gap-3 p-3 w-full rounded hover:bg-gray-100 text-gray-700">
               <LogOut size={20} /> Logout

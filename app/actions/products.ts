@@ -26,7 +26,8 @@ export async function editProduct(formData: FormData) {
   redirect("/dashboard");
 }
 
-export async function deleteProduct(id: number) {
-  db.prepare("DELETE FROM Product WHERE id = ?").run(id);
+export async function archiveProduct(id: number) {
+  db.prepare("UPDATE Product SET isDeleted = 1, updatedAt = CURRENT_TIMESTAMP WHERE id = ?").run(id);
+  db.prepare("INSERT INTO Movement (productId, type, quantity, reason) VALUES (?, ?, ?, ?)").run(id, 'OUT', 0, 'Baja de producto');
   redirect("/dashboard");
 }

@@ -13,6 +13,7 @@ db.exec(`
     name TEXT,
     description TEXT,
     stock INTEGER DEFAULT 0,
+    isDeleted INTEGER DEFAULT 0,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
   );
@@ -21,6 +22,7 @@ db.exec(`
     productId INTEGER NOT NULL,
     type TEXT NOT NULL,
     quantity INTEGER NOT NULL,
+    reason TEXT,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (productId) REFERENCES Product(id)
   );
