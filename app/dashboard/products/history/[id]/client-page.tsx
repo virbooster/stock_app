@@ -2,6 +2,7 @@
 import { useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { ArrowUpDown } from "lucide-react";
+import { ExportButtons } from "@/components/ExportButtons";
 
 export default function HistoryPage({ product, movements: initialMovements }: { product: any, movements: any[] }) {
   const [movements, setMovements] = useState(initialMovements);
@@ -17,9 +18,20 @@ export default function HistoryPage({ product, movements: initialMovements }: { 
     }));
   };
 
+  // Preparamos los datos para exportar
+  const exportData = movements.map(m => ({
+    Fecha: new Date(m.createdAt).toLocaleString(),
+    Tipo: m.type,
+    Cantidad: m.quantity,
+    Motivo: m.reason
+  }));
+
   return (
     <DashboardLayout>
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">Historial de {product.name}</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">Historial de {product.name}</h1>
+        <ExportButtons data={exportData} />
+      </div>
       
       <div className="bg-white p-6 shadow-sm rounded-lg border border-gray-200">
         <table className="w-full text-left">
