@@ -26,7 +26,7 @@ export default async function ArchivedPage() {
                 <td className="p-2 text-sm">{product.name}</td>
                 <td className="p-2 flex gap-2 items-center">
                   <Link href={`/dashboard/products/history/${product.id}`} className="text-purple-600 hover:underline text-sm">Ver Historial</Link>
-                  <form action={async () => { "use server"; await unarchiveProduct(product.id); }}>
+                  <form action={async () => { "use server"; await unarchiveProduct(product.id); }} className="flex items-center">
                     <button type="submit" className="text-green-600 hover:underline text-sm">Desarchivar</button>
                   </form>
                 </td>
