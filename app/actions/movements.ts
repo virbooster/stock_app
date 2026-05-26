@@ -13,4 +13,7 @@ export async function addMovement(productId: number, quantity: number, type: "IN
   const newStock = type === "IN" ? product.stock + quantity : product.stock - quantity;
   
   db.prepare("UPDATE Product SET stock = ?, updatedAt = CURRENT_TIMESTAMP WHERE id = ?").run(newStock, productId);
+  
+  // Registrar el movimiento en el historial
+  db.prepare("INSERT INTO Movement (productId, type, quantity) VALUES (?, ?, ?)").run(productId, type, quantity);
 }

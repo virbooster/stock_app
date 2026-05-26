@@ -44,6 +44,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ sea
                 <td className="p-3">{product.stock}</td>
                 <td className="p-3 flex gap-2">
                   <Link href={`/dashboard/products/edit/${product.id}`} className="text-blue-600 hover:underline">Editar</Link>
+                  <Link href={`/dashboard/products/history/${product.id}`} className="text-purple-600 hover:underline">Historial</Link>
                   <form action={async () => { "use server"; await deleteProduct(product.id); }}>
                     <button type="submit" className="text-red-600 hover:underline">Eliminar</button>
                   </form>
