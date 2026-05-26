@@ -5,7 +5,7 @@ import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-export function ExportButtons({ data, type = 'stock' }: { data: any[], type?: 'stock' | 'history' }) {
+export function ExportButtons({ data, type = 'stock' }: { data: any[], type?: string }) {
   const exportExcel = () => {
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
@@ -15,7 +15,7 @@ export function ExportButtons({ data, type = 'stock' }: { data: any[], type?: 's
 
   const exportPDF = () => {
     const doc = new jsPDF();
-    doc.text("Reporte", 14, 15);
+    doc.text(`Reporte: ${type}`, 14, 15);
     
     let head: string[][] = [];
     let body: any[][] = [];
