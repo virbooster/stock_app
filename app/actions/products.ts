@@ -22,7 +22,12 @@ export async function editProduct(formData: FormData) {
   const name = formData.get("name") as string;
   const description = formData.get("description") as string;
   const stock = Number(formData.get("stock"));
+  
   db.prepare("UPDATE Product SET name = ?, description = ?, stock = ?, updatedAt = CURRENT_TIMESTAMP WHERE id = ?").run(name, description, stock, id);
+  
+  // Registrar la edición en el historial
+  db.prepare("INSERT INTO Movement (productId, type, quantity, reason) VALUES (?, ?, ?, ?)").run(id, 'EDIT', stock, `Edición de producto: Stock final ${stock}`);
+  
   redirect("/dashboard");
 }
 
