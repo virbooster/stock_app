@@ -57,6 +57,7 @@ export default function HistoryPage({ product, movements: initialMovements }: { 
               <th className="p-2 text-sm cursor-pointer flex items-center" onClick={toggleSort}>
                 Fecha <ArrowUpDown size={14} className="ml-1" />
               </th>
+              <th className="p-2 text-sm">Producto</th>
               <th className="p-2 text-sm">
                 <select 
                   className="bg-transparent font-bold text-gray-800 outline-none cursor-pointer text-sm"
@@ -66,6 +67,7 @@ export default function HistoryPage({ product, movements: initialMovements }: { 
                   <option value="ALL">Tipo</option>
                   <option value="IN">IN</option>
                   <option value="OUT">OUT</option>
+                  <option value="EDIT">EDIT</option>
                 </select>
               </th>
               <th className="p-2 text-sm">Cantidad</th>
@@ -76,8 +78,9 @@ export default function HistoryPage({ product, movements: initialMovements }: { 
             {filteredMovements.map((m) => (
               <tr key={m.id} className="border-b border-gray-100">
                 <td className="p-2 text-sm">{new Date(m.createdAt).toLocaleString()}</td>
+                <td className="p-2 text-sm">{product.name}</td>
                 <td className="p-2 text-sm">
-                  <span className={`px-2 py-0.5 rounded text-sm ${m.type === 'IN' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                  <span className={`px-2 py-0.5 rounded text-sm ${m.type === 'IN' ? 'bg-green-100 text-green-800' : m.type === 'EDIT' ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'}`}>
                     {m.type}
                   </span>
                 </td>
