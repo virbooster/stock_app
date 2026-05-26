@@ -37,15 +37,6 @@ export default function HistoryPage({ product, movements: initialMovements }: { 
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Historial de {product.name}</h1>
         <div className="flex gap-2">
-          <select 
-            className="px-4 py-2 border rounded"
-            value={filterType} 
-            onChange={(e) => setFilterType(e.target.value)}
-          >
-            <option value="ALL">Todos</option>
-            <option value="IN">Entradas (IN)</option>
-            <option value="OUT">Salidas (OUT)</option>
-          </select>
           {product.isDeleted === 0 ? (
             <form action={async () => { await archiveProduct(product.id); }}>
               <button type="submit" className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Archivar</button>
@@ -66,7 +57,17 @@ export default function HistoryPage({ product, movements: initialMovements }: { 
               <th className="p-3 cursor-pointer flex items-center" onClick={toggleSort}>
                 Fecha <ArrowUpDown size={16} className="ml-1" />
               </th>
-              <th className="p-3">Tipo</th>
+              <th className="p-3">
+                <select 
+                  className="bg-transparent font-bold text-gray-800 outline-none cursor-pointer"
+                  value={filterType} 
+                  onChange={(e) => setFilterType(e.target.value)}
+                >
+                  <option value="ALL">Tipo</option>
+                  <option value="IN">IN</option>
+                  <option value="OUT">OUT</option>
+                </select>
+              </th>
               <th className="p-3">Cantidad</th>
               <th className="p-3">Motivo</th>
             </tr>
