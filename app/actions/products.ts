@@ -22,11 +22,21 @@ export async function editProduct(formData: FormData) {
   const name = formData.get("name") as string;
   const description = formData.get("description") as string;
   const stock = Number(formData.get("stock"));
-  
-  db.prepare("UPDATE Product SET name = ?, description = ?, stock = ?, updatedAt = CURRENT_TIMESTAMP WHERE id = ?").run(name, description, stock, id);
-  
-  // Registrar la edición en el historial
-  db.prepare("INSERT INTO Movement (productId, type, quantity, reason) VALUES (?, ?, ?, ?)").run(id, 'EDIT', stock, `Edición de producto: Stock final ${stock}`);
+
+  // Obtener valores actuales para comparar
+  const oldProduct = db.prepare("SELECT * FROM Product WHERE id = ?").get(id) as any;
+
+  // Detectar qué cambió
+  let changes = [];
+  if (oldProduct.name !== name) changes.push(`Nombre: '${oldProduct.name}' -> '${name}'`);
+  if (oldProduct.description !== description) changes.push(`Desc: '${oldProduct.description}' -> '${description}'`);
+  if (oldProduct.stock !== stock) changes.push(`Stock: ${oldProduct.stock} -> ${stock}`);
+
+  if (changes.length > 0) {
+    const reason = `Edición: ${changes.join('; ')}`;
+    db.prepare("UPDATE Product SET name = ?, description = ?, stock = ?, updatedAt = CURRENT_TIMESTAMP WHERE id = ?").run(name, description, stock, id);
+    db.prepare("INSERT INTO Movement (productId, type, quantity, reason) VALUES (?, ?, ?, ?)").run(id, 'EDIT', stock, reason);
+  }
   
   redirect("/dashboard");
 }
