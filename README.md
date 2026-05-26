@@ -2,6 +2,12 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+Alternatively, you can use the provided PowerShell script to install dependencies and start the development server automatically:
+
+```powershell
+.\start_app.ps1
+```
+
 First, run the development server:
 
 ```bash
