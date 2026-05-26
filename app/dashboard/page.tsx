@@ -20,33 +20,46 @@ export default async function DashboardPage(props: { searchParams: Promise<{ sea
         </div>
       </div>
       
-      <form className="mb-6">
-        <input name="search" defaultValue={query} placeholder="Buscar producto..." className="p-2 border rounded w-full max-w-sm" />
+      <form className="mb-6 relative w-full max-w-sm">
+        <input 
+          name="search" 
+          defaultValue={query} 
+          placeholder="Buscar producto..." 
+          className="p-2 border rounded w-full" 
+        />
+        {query && (
+          <a 
+            href="/dashboard" 
+            className="absolute right-2 top-2.5 text-gray-500 hover:text-gray-800"
+          >
+            ✕
+          </a>
+        )}
       </form>
 
       <div className="bg-white p-6 shadow-sm rounded-lg border border-gray-200">
         <table className="w-full text-left">
           <thead>
             <tr className="border-b border-gray-200">
-              <th className="p-3">ID</th>
-              <th className="p-3">Nombre</th>
-              <th className="p-3">Descripción</th>
-              <th className="p-3">Stock</th>
-              <th className="p-3">Acciones</th>
+              <th className="p-2 text-sm">ID</th>
+              <th className="p-2 text-sm">Nombre</th>
+              <th className="p-2 text-sm">Descripción</th>
+              <th className="p-2 text-sm">Stock</th>
+              <th className="p-2 text-sm">Acciones</th>
             </tr>
           </thead>
           <tbody>
             {products.map((product) => (
               <tr key={product.id} className="border-b border-gray-100">
-                <td className="p-3">{product.id}</td>
-                <td className="p-3">{product.name}</td>
-                <td className="p-3">{product.description}</td>
-                <td className="p-3">{product.stock}</td>
-                <td className="p-3 flex gap-2">
-                  <Link href={`/dashboard/products/edit/${product.id}`} className="text-blue-600 hover:underline">Editar</Link>
-                  <Link href={`/dashboard/products/history/${product.id}`} className="text-purple-600 hover:underline">Historial</Link>
+                <td className="p-2 text-sm">{product.id}</td>
+                <td className="p-2 text-sm">{product.name}</td>
+                <td className="p-2 text-sm">{product.description}</td>
+                <td className="p-2 text-sm">{product.stock}</td>
+                <td className="p-2 flex gap-2 items-center">
+                  <Link href={`/dashboard/products/edit/${product.id}`} className="text-blue-600 hover:underline text-sm">Editar</Link>
+                  <Link href={`/dashboard/products/history/${product.id}`} className="text-purple-600 hover:underline text-sm">Historial</Link>
                   <form action={async () => { "use server"; await archiveProduct(product.id); }}>
-                    <button type="submit" className="text-red-600 hover:underline">Archivar</button>
+                    <button type="submit" className="text-red-600 hover:underline text-sm">Archivar</button>
                   </form>
                 </td>
               </tr>

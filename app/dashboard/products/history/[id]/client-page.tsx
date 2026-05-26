@@ -54,12 +54,12 @@ export default function HistoryPage({ product, movements: initialMovements }: { 
         <table className="w-full text-left">
           <thead>
             <tr className="border-b border-gray-200">
-              <th className="p-3 cursor-pointer flex items-center" onClick={toggleSort}>
-                Fecha <ArrowUpDown size={16} className="ml-1" />
+              <th className="p-2 text-sm cursor-pointer flex items-center" onClick={toggleSort}>
+                Fecha <ArrowUpDown size={14} className="ml-1" />
               </th>
-              <th className="p-3">
+              <th className="p-2 text-sm">
                 <select 
-                  className="bg-transparent font-bold text-gray-800 outline-none cursor-pointer"
+                  className="bg-transparent font-bold text-gray-800 outline-none cursor-pointer text-sm"
                   value={filterType} 
                   onChange={(e) => setFilterType(e.target.value)}
                 >
@@ -68,21 +68,21 @@ export default function HistoryPage({ product, movements: initialMovements }: { 
                   <option value="OUT">OUT</option>
                 </select>
               </th>
-              <th className="p-3">Cantidad</th>
-              <th className="p-3">Motivo</th>
+              <th className="p-2 text-sm">Cantidad</th>
+              <th className="p-2 text-sm">Motivo</th>
             </tr>
           </thead>
           <tbody>
             {filteredMovements.map((m) => (
               <tr key={m.id} className="border-b border-gray-100">
-                <td className="p-3">{new Date(m.createdAt).toLocaleString()}</td>
-                <td className="p-3">
-                  <span className={`px-2 py-1 rounded text-sm ${m.type === 'IN' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                <td className="p-2 text-sm">{new Date(m.createdAt).toLocaleString()}</td>
+                <td className="p-2 text-sm">
+                  <span className={`px-2 py-0.5 rounded text-sm ${m.type === 'IN' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                     {m.type}
                   </span>
                 </td>
-                <td className="p-3">{m.quantity}</td>
-                <td className="p-3">{m.reason}</td>
+                <td className="p-2 text-sm">{m.quantity}</td>
+                <td className="p-2 text-sm">{m.reason}</td>
               </tr>
             ))}
           </tbody>

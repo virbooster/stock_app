@@ -18,23 +18,24 @@ export default function MovementForm({ products }: { products: any[] }) {
   }, { success: null, message: "" });
 
   return (
-    <form action={action} className="bg-white p-6 shadow-sm rounded-lg border border-gray-200 w-full max-w-lg">
+    <form action={action} className="bg-white p-4 shadow-sm rounded-lg border border-gray-200 w-full max-w-sm">
       {state.message && (
-        <div className={`p-3 mb-4 rounded ${state.success ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+        <div className={`p-2 mb-3 rounded text-sm ${state.success ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
           {state.message}
         </div>
       )}
-      <select name="productId" required className="w-full p-2 mb-4 border rounded border-gray-300">
+      <select name="productId" required className="w-full p-1.5 mb-3 border rounded border-gray-300 text-sm">
         <option value="">Seleccionar Producto</option>
         {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
       </select>
-      <input name="quantity" type="number" min="1" placeholder="Cantidad" required className="w-full p-2 mb-4 border rounded border-gray-300" />
-      <select name="type" required className="w-full p-2 mb-4 border rounded border-gray-300">
+      <input name="quantity" type="number" min="1" placeholder="Cantidad" required className="w-full p-1.5 mb-3 border rounded border-gray-300 text-sm" />
+      <select name="type" required className="w-full p-1.5 mb-3 border rounded border-gray-300 text-sm">
         <option value="IN">Entrada</option>
         <option value="OUT">Salida</option>
       </select>
-      <input name="reason" placeholder="Motivo (ej: Compra, Venta, Devolución)" required className="w-full p-2 mb-4 border rounded border-gray-300" />
-      <button type="submit" className="w-full p-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium">Registrar Movimiento</button>
+      <input name="reason" placeholder="Motivo" required className="w-full p-1.5 mb-4 border rounded border-gray-300 text-sm" />
+      <button type="submit" className="w-full p-1.5 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium text-sm">Registrar Movimiento</button>
     </form>
   );
+
 }
