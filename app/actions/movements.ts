@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 
-export async function addMovement(productId: number, quantity: number, type: "IN" | "OUT") {
+export async function addMovement(productId: number, quantity: number, type: "IN" | "OUT", reason: string) {
   const product = db.prepare("SELECT * FROM Product WHERE id = ?").get(productId) as any;
   if (!product) throw new Error("Product not found");
 
@@ -15,5 +15,5 @@ export async function addMovement(productId: number, quantity: number, type: "IN
   db.prepare("UPDATE Product SET stock = ?, updatedAt = CURRENT_TIMESTAMP WHERE id = ?").run(newStock, productId);
   
   // Registrar el movimiento en el historial
-  db.prepare("INSERT INTO Movement (productId, type, quantity) VALUES (?, ?, ?)").run(productId, type, quantity);
+  db.prepare("INSERT INTO Movement (productId, type, quantity, reason) VALUES (?, ?, ?, ?)").run(productId, type, quantity, reason);
 }

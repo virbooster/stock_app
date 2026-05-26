@@ -5,10 +5,11 @@ import { useActionState } from "react";
 export default function MovementForm({ products }: { products: any[] }) {
   const [state, action] = useActionState(async (prevState: any, formData: FormData) => {
     try {
-      await addMovement(
+        await addMovement(
         Number(formData.get("productId")),
         Number(formData.get("quantity")),
-        formData.get("type") as "IN" | "OUT"
+        formData.get("type") as "IN" | "OUT",
+        formData.get("reason") as string
       );
       return { success: true, message: "Movimiento registrado con éxito" };
     } catch (e: any) {
@@ -32,6 +33,7 @@ export default function MovementForm({ products }: { products: any[] }) {
         <option value="IN">Entrada</option>
         <option value="OUT">Salida</option>
       </select>
+      <input name="reason" placeholder="Motivo (ej: Compra, Venta, Devolución)" required className="w-full p-2 mb-4 border rounded border-gray-300" />
       <button type="submit" className="w-full p-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium">Registrar Movimiento</button>
     </form>
   );
