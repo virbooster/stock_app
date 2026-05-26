@@ -31,3 +31,14 @@ export async function archiveProduct(id: number) {
   db.prepare("INSERT INTO Movement (productId, type, quantity, reason) VALUES (?, ?, ?, ?)").run(id, 'OUT', 0, 'Baja de producto');
   redirect("/dashboard");
 }
+
+export async function unarchiveProduct(id: number) {
+  db.prepare("UPDATE Product SET isDeleted = 0, updatedAt = CURRENT_TIMESTAMP WHERE id = ?").run(id);
+  db.prepare("INSERT INTO Movement (productId, type, quantity, reason) VALUES (?, ?, ?, ?)").run(id, 'IN', 0, 'Desarchivado de producto');
+  redirect("/dashboard/archived");
+}
+
+export async function deleteProduct(id: number) {
+  db.prepare("DELETE FROM Product WHERE id = ?").run(id);
+  redirect("/dashboard");
+}

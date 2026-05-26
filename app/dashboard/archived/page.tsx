@@ -1,6 +1,7 @@
 import DashboardLayout from "@/components/DashboardLayout";
 import { db } from "@/lib/db";
 import Link from "next/link";
+import { unarchiveProduct } from "@/app/actions/products";
 
 export default async function ArchivedPage() {
   const products = db.prepare("SELECT * FROM Product WHERE isDeleted = 1").all() as any[];
@@ -23,8 +24,11 @@ export default async function ArchivedPage() {
               <tr key={product.id} className="border-b border-gray-100">
                 <td className="p-3">{product.id}</td>
                 <td className="p-3">{product.name}</td>
-                <td className="p-3">
+                <td className="p-3 flex gap-2">
                   <Link href={`/dashboard/products/history/${product.id}`} className="text-purple-600 hover:underline">Ver Historial</Link>
+                  <form action={async () => { "use server"; await unarchiveProduct(product.id); }}>
+                    <button type="submit" className="text-green-600 hover:underline">Desarchivar</button>
+                  </form>
                 </td>
               </tr>
             ))}
