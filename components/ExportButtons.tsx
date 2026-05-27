@@ -23,6 +23,9 @@ export function ExportButtons({ data, type = 'stock' }: { data: any[], type?: st
     if (type === 'stock') {
       head = [["ID", "Nombre", "Descripción", "Stock"]];
       body = data.map(p => [p.id, p.name, p.description, p.stock]);
+    } else if (type === 'archivados') {
+      head = [["ID", "Nombre", "Descripción", "Stock"]];
+      body = data.map(p => [p.id, p.name, p.description, p.stock]);
     } else {
       head = [["Fecha", "Tipo", "Cantidad", "Motivo"]];
       body = data.map(m => [m.Fecha, m.Tipo, m.Cantidad, m.Motivo]);

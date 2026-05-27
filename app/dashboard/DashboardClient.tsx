@@ -5,14 +5,23 @@ import { ExportButtons } from "@/components/ExportButtons";
 import { archiveProduct } from "@/app/actions/products";
 import Link from "next/link";
 import { ArrowUpDown } from "lucide-react";
+import { Pagination } from "@/components/Pagination";
 
 export default function DashboardClient({ initialProducts }: { initialProducts: any[] }) {
   const [products, setProducts] = useState(initialProducts);
   const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' } | null>(null);
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const filteredProducts = useMemo(() => {
-    return products.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
+    const searchLower = search.toLowerCase();
+    return products.filter(p => 
+      p.id.toString().includes(searchLower) ||
+      p.name.toLowerCase().includes(searchLower) ||
+      p.description?.toLowerCase().includes(searchLower) ||
+      p.stock.toString().includes(searchLower)
+    );
   }, [products, search]);
 
   const sortedProducts = useMemo(() => {
@@ -27,19 +36,26 @@ export default function DashboardClient({ initialProducts }: { initialProducts: 
     return sortableItems;
   }, [filteredProducts, sortConfig]);
 
+  // Paginación
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = sortedProducts.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(sortedProducts.length / itemsPerPage);
+
   const requestSort = (key: string) => {
     let direction: 'asc' | 'desc' = 'asc';
     if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
       direction = 'desc';
     }
     setSortConfig({ key, direction });
+    setCurrentPage(1);
   };
 
   return (
     <DashboardLayout>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           <Link href="/dashboard/products/add" className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm">Nuevo Producto</Link>
           <ExportButtons data={sortedProducts} type="stock" />
         </div>
@@ -48,11 +64,11 @@ export default function DashboardClient({ initialProducts }: { initialProducts: 
       <form className="mb-6 relative w-full max-w-sm">
         <input 
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {setSearch(e.target.value); setCurrentPage(1);}}
           placeholder="Buscar producto..." 
           className="p-2 border rounded w-full text-sm" 
         />
-        {search && <button type="button" onClick={() => setSearch("")} className="absolute right-2 top-2.5 text-gray-500 hover:text-gray-800 text-sm">✕</button>}
+        {search && <button type="button" onClick={() => {setSearch(""); setCurrentPage(1);}} className="absolute right-2 top-2.5 text-gray-500 hover:text-gray-800 text-sm">✕</button>}
       </form>
 
       <div className="bg-white p-6 shadow-sm rounded-lg border border-gray-200">
@@ -67,7 +83,7 @@ export default function DashboardClient({ initialProducts }: { initialProducts: 
             </tr>
           </thead>
           <tbody>
-            {sortedProducts.map((product) => (
+            {currentItems.map((product) => (
               <tr key={product.id} className="border-b border-gray-100">
                 <td className="p-2 text-sm">{product.id}</td>
                 <td className="p-2 text-sm">{product.name}</td>
@@ -84,6 +100,7 @@ export default function DashboardClient({ initialProducts }: { initialProducts: 
             ))}
           </tbody>
         </table>
+        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
       </div>
     </DashboardLayout>
   );
