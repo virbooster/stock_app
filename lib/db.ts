@@ -1,6 +1,9 @@
 const Database = require('better-sqlite3');
 const db = new Database('dev.db');
 
+// Función para obtener fecha en formato Argentina
+export const getArgDate = () => new Date().toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' });
+
 // Crear tablas si no existen
 db.exec(`
   CREATE TABLE IF NOT EXISTS User (
@@ -14,8 +17,8 @@ db.exec(`
     description TEXT,
     stock INTEGER DEFAULT 0,
     isDeleted INTEGER DEFAULT 0,
-    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    createdAt TEXT DEFAULT (DATETIME('now', 'localtime')),
+    updatedAt TEXT DEFAULT (DATETIME('now', 'localtime'))
   );
   CREATE TABLE IF NOT EXISTS Movement (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -23,7 +26,7 @@ db.exec(`
     type TEXT NOT NULL,
     quantity INTEGER NOT NULL,
     reason TEXT,
-    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    createdAt TEXT DEFAULT (DATETIME('now', 'localtime')),
     FOREIGN KEY (productId) REFERENCES Product(id)
   );
 `);

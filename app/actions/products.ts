@@ -8,7 +8,7 @@ export async function addProduct(formData: FormData) {
   const description = formData.get("description") as string;
   const stock = Number(formData.get("stock"));
   
-  const result = db.prepare("INSERT INTO Product (name, description, stock, updatedAt) VALUES (?, ?, ?, CURRENT_TIMESTAMP)").run(name, description, stock);
+  const result = db.prepare("INSERT INTO Product (name, description, stock) VALUES (?, ?, ?)").run(name, description, stock);
   const productId = Number(result.lastInsertRowid);
   
   // Registrar el alta en el historial
