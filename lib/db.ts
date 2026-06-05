@@ -1,10 +1,6 @@
 const Database = require('better-sqlite3');
 const db = new Database('dev.db');
 
-// Función para obtener fecha en formato Argentina
-export const getArgDate = () => new Date().toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' });
-
-// Crear tablas si no existen
 db.exec(`
   CREATE TABLE IF NOT EXISTS User (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -20,6 +16,7 @@ db.exec(`
     createdAt TEXT DEFAULT (DATETIME('now', 'localtime')),
     updatedAt TEXT DEFAULT (DATETIME('now', 'localtime'))
   );
+
   CREATE TABLE IF NOT EXISTS Movement (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     productId INTEGER NOT NULL,
