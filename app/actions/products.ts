@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 export async function addProduct(formData: FormData) {
   const name = formData.get("name") as string;
@@ -14,6 +15,7 @@ export async function addProduct(formData: FormData) {
   // Registrar el alta en el historial
   db.prepare("INSERT INTO Movement (productId, type, quantity, reason, createdAt) VALUES (?, ?, ?, ?, DATETIME('now', 'localtime'))").run(productId, "IN", stock, "Alta de producto");
   
+  revalidatePath("/dashboard");
   redirect("/dashboard");
 }
 
@@ -38,6 +40,7 @@ export async function editProduct(formData: FormData) {
     db.prepare("INSERT INTO Movement (productId, type, quantity, reason, createdAt) VALUES (?, ?, ?, ?, DATETIME('now', 'localtime'))").run(id, 'EDIT', stock, reason);
   }
   
+  revalidatePath("/dashboard");
   redirect("/dashboard");
 }
 
@@ -45,6 +48,8 @@ export async function archiveProduct(id: number) {
   const product = db.prepare("SELECT stock FROM Product WHERE id = ?").get(id) as any;
   db.prepare("UPDATE Product SET isDeleted = 1, updatedAt = DATETIME('now', 'localtime') WHERE id = ?").run(id);
   db.prepare("INSERT INTO Movement (productId, type, quantity, reason, createdAt) VALUES (?, ?, ?, ?, DATETIME('now', 'localtime'))").run(id, 'OUT', product.stock, 'Baja de producto (Archivado) - Stock guardado: ' + product.stock);
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/archived");
   redirect("/dashboard");
 }
 
@@ -52,10 +57,25 @@ export async function unarchiveProduct(id: number) {
   const product = db.prepare("SELECT stock FROM Product WHERE id = ?").get(id) as any;
   db.prepare("UPDATE Product SET isDeleted = 0, updatedAt = DATETIME('now', 'localtime') WHERE id = ?").run(id);
   db.prepare("INSERT INTO Movement (productId, type, quantity, reason, createdAt) VALUES (?, ?, ?, ?, DATETIME('now', 'localtime'))").run(id, 'IN', product.stock, 'Desarchivado de producto - Stock recuperado: ' + product.stock);
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/archived");
   redirect("/dashboard/archived");
 }
 
 export async function deleteProduct(id: number) {
-  db.prepare("DELETE FROM Product WHERE id = ?").run(id);
-  redirect("/dashboard");
+  db.transaction(() => {
+    db.prepare("DELETE FROM Movement WHERE productId = ?").run(id);
+    db.prepare("DELETE FROM Product WHERE id = ?").run(id);
+  })();
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/archived");
+  // No redirect here to allow call from client components that handle their own state/navigation
+}
+
+export async function deletePermanently(id: number) {
+  db.transaction(() => {
+    db.prepare("DELETE FROM Movement WHERE productId = ?").run(id);
+    db.prepare("DELETE FROM Product WHERE id = ?").run(id);
+  })();
+  revalidatePath("/dashboard/archived");
 }
