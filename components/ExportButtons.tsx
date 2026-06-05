@@ -41,8 +41,8 @@ export function ExportButtons({ data, type = 'stock' }: { data: any[], type?: st
 
   return (
     <div className="flex gap-2">
-      <button onClick={exportExcel} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Exportar Excel</button>
-      <button onClick={exportPDF} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Exportar PDF</button>
+      <button onClick={exportExcel} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">Exportar Excel</button>
+      <button onClick={exportPDF} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">Exportar PDF</button>
     </div>
   );
 }
