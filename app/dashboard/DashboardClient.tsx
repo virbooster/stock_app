@@ -4,7 +4,7 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { ExportButtons } from "@/components/ExportButtons";
 import { archiveProduct } from "@/app/actions/products";
 import Link from "next/link";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, Search, Plus, Edit2, History, Archive, X } from "lucide-react";
 import { Pagination } from "@/components/Pagination";
 
 export default function DashboardClient({ initialProducts }: { initialProducts: any[] }) {
@@ -36,7 +36,6 @@ export default function DashboardClient({ initialProducts }: { initialProducts: 
     return sortableItems;
   }, [filteredProducts, sortConfig]);
 
-  // Paginación
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = sortedProducts.slice(indexOfFirstItem, indexOfLastItem);
@@ -53,54 +52,93 @@ export default function DashboardClient({ initialProducts }: { initialProducts: 
 
   return (
     <DashboardLayout>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
+      <div className="flex flex-col md:flex-row justify-between items-center gap-2 mb-3">
+        <h1 className="text-xl font-bold tracking-tight text-[var(--text-main)]">Dashboard</h1>
         <div className="flex gap-2 items-center">
-          <Link href="/dashboard/products/add" className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm">Nuevo Producto</Link>
+          <Link 
+            href="/dashboard/products/add" 
+            className="inline-flex items-center gap-2 px-3 py-1.5 bg-[var(--primary)] text-white rounded-md hover:opacity-90 transition-all text-sm font-semibold shadow-sm"
+          >
+            <Plus size={16} /> Nuevo Producto
+          </Link>
           <ExportButtons data={sortedProducts} type="stock" />
         </div>
       </div>
       
-      <form className="mb-6 relative w-full max-w-sm">
-        <input 
-          value={search}
-          onChange={(e) => {setSearch(e.target.value); setCurrentPage(1);}}
-          placeholder="Buscar producto..." 
-          className="p-2 border rounded w-full text-sm" 
-        />
-        {search && <button type="button" onClick={() => {setSearch(""); setCurrentPage(1);}} className="absolute right-2 top-2.5 text-gray-500 hover:text-gray-800 text-sm">✕</button>}
-      </form>
+      <div className="card px-4 py-2 mb-3 flex items-center justify-between gap-4">
+        <div className="relative flex-1 max-w-xs">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" size={15} />
+          <input 
+            value={search}
+            onChange={(e) => {setSearch(e.target.value); setCurrentPage(1);}}
+            placeholder="Buscar productos..." 
+            className="w-full pl-10 pr-10 py-1.5 bg-[var(--bg-app)] border border-[var(--border)] rounded-md text-sm focus:ring-1 focus:ring-[var(--primary)] outline-none" 
+          />
+          {search && (
+            <button onClick={() => {setSearch(""); setCurrentPage(1);}} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]">
+              <X size={14} />
+            </button>
+          )}
+        </div>
+        <p className="text-[var(--text-muted)] text-[11px] uppercase font-bold tracking-wider hidden sm:block">
+          Total: {filteredProducts.length} productos
+        </p>
+      </div>
 
-      <div className="bg-white p-6 shadow-sm rounded-lg border border-gray-200">
-        <table className="w-full text-left">
-          <thead>
-            <tr className="border-b border-gray-200">
-              <th className="p-2 text-sm cursor-pointer" onClick={() => requestSort('id')}>ID <ArrowUpDown size={14} className="inline" /></th>
-              <th className="p-2 text-sm cursor-pointer" onClick={() => requestSort('name')}>Nombre <ArrowUpDown size={14} className="inline" /></th>
-              <th className="p-2 text-sm">Descripción</th>
-              <th className="p-2 text-sm cursor-pointer" onClick={() => requestSort('stock')}>Stock <ArrowUpDown size={14} className="inline" /></th>
-              <th className="p-2 text-sm">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentItems.map((product) => (
-              <tr key={product.id} className="border-b border-gray-100">
-                <td className="p-2 text-sm">{product.id}</td>
-                <td className="p-2 text-sm">{product.name}</td>
-                <td className="p-2 text-sm">{product.description}</td>
-                <td className="p-2 text-sm">{product.stock}</td>
-                <td className="p-2 flex gap-2 items-center">
-                  <Link href={`/dashboard/products/edit/${product.id}`} className="text-blue-600 hover:underline text-sm">Editar</Link>
-                  <Link href={`/dashboard/products/history/${product.id}`} className="text-purple-600 hover:underline text-sm">Historial</Link>
-                  <form action={async () => { await archiveProduct(product.id); }} className="flex items-center">
-                    <button type="submit" className="text-red-600 hover:underline text-sm">Archivar</button>
-                  </form>
-                </td>
+      <div className="card overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-[var(--bg-app)] border-b border-[var(--border)]">
+                <th className="py-2 px-4 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] cursor-pointer" onClick={() => requestSort('id')}>
+                  <div className="flex items-center gap-1.5">ID <ArrowUpDown size={12} /></div>
+                </th>
+                <th className="py-2 px-4 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] cursor-pointer" onClick={() => requestSort('name')}>
+                  <div className="flex items-center gap-1.5">Producto <ArrowUpDown size={12} /></div>
+                </th>
+                <th className="py-2 px-4 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">Descripción</th>
+                <th className="py-2 px-4 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] cursor-pointer text-right" onClick={() => requestSort('stock')}>
+                  <div className="flex items-center justify-end gap-1.5">Stock <ArrowUpDown size={12} /></div>
+                </th>
+                <th className="py-2 px-4 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] text-center">Acciones</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+            </thead>
+            <tbody className="divide-y divide-[var(--border)]">
+              {currentItems.length > 0 ? (
+                currentItems.map((product) => (
+                  <tr key={product.id} className="hover:bg-[var(--bg-app)] transition-colors group">
+                    <td className="py-2 px-4 text-sm text-[var(--text-muted)]">#{product.id}</td>
+                    <td className="py-2 px-4 text-sm font-semibold text-[var(--text-main)]">{product.name}</td>
+                    <td className="py-2 px-4 text-sm text-[var(--text-muted)] max-w-xs truncate">{product.description || "-"}</td>
+                    <td className="py-2 px-4 text-sm font-bold text-right">
+                      <span className={`inline-block px-2.5 py-0.5 rounded-full ${product.stock > 10 ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
+                        {product.stock}
+                      </span>
+                    </td>
+                    <td className="py-2 px-4 text-center">
+                      <div className="flex justify-center gap-2">
+                        <Link href={`/dashboard/products/edit/${product.id}`} className="text-[var(--text-muted)] hover:text-[var(--primary)]" title="Editar"><Edit2 size={16} /></Link>
+                        <Link href={`/dashboard/products/history/${product.id}`} className="text-[var(--text-muted)] hover:text-purple-600" title="Historial"><History size={16} /></Link>
+                        <form action={async () => { await archiveProduct(product.id); }} className="inline">
+                          <button type="submit" className="text-[var(--text-muted)] hover:text-[var(--accent-danger)]" title="Archivar"><Archive size={16} /></button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} className="p-8 text-center text-sm text-[var(--text-muted)] italic">
+                    Sin resultados.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+        <div className="py-2 px-4 border-t border-[var(--border)] bg-[var(--bg-app)]/50">
+          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+        </div>
       </div>
     </DashboardLayout>
   );

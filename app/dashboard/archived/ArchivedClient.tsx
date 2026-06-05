@@ -2,7 +2,7 @@
 import { useState, useMemo, useTransition } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import Link from "next/link";
-import { ArrowUpDown, Trash2 } from "lucide-react";
+import { ArrowUpDown, Trash2, Search, X, RotateCcw, History } from "lucide-react";
 import { ExportButtons } from "@/components/ExportButtons";
 import { unarchiveProduct, deletePermanently } from "@/app/actions/products";
 import { Pagination } from "@/components/Pagination";
@@ -65,58 +65,76 @@ export default function ArchivedClient({ initialProducts }: { initialProducts: a
 
   return (
     <DashboardLayout>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Productos Archivados</h1>
+      <div className="flex flex-col md:flex-row justify-between items-center gap-2 mb-3">
+        <h1 className="text-xl font-bold tracking-tight text-[var(--text-main)]">Productos Archivados</h1>
         <ExportButtons data={sortedProducts} type="archivados" />
       </div>
       
-      <form className="mb-6 relative w-full max-w-sm">
-        <input 
-          value={search}
-          onChange={(e) => {setSearch(e.target.value); setCurrentPage(1);}}
-          placeholder="Buscar producto..." 
-          className="p-2 border rounded w-full text-sm" 
-        />
-        {search && <button type="button" onClick={() => {setSearch(""); setCurrentPage(1);}} className="absolute right-2 top-2.5 text-gray-500 hover:text-gray-800 text-sm">✕</button>}
-      </form>
+      <div className="card px-4 py-2 mb-3 flex items-center justify-between gap-4">
+        <div className="relative flex-1 max-w-xs">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" size={15} />
+          <input 
+            value={search}
+            onChange={(e) => {setSearch(e.target.value); setCurrentPage(1);}}
+            placeholder="Buscar en archivos..." 
+            className="w-full pl-10 pr-10 py-1.5 bg-[var(--bg-app)] border border-[var(--border)] rounded-md text-sm focus:ring-1 focus:ring-[var(--primary)] outline-none" 
+          />
+          {search && (
+            <button onClick={() => {setSearch(""); setCurrentPage(1);}} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]">
+              <X size={14} />
+            </button>
+          )}
+        </div>
+      </div>
 
-      <div className="bg-white p-6 shadow-sm rounded-lg border border-gray-200">
-        <table className="w-full text-left">
-          <thead>
-            <tr className="border-b border-gray-200">
-              <th className="p-2 text-sm cursor-pointer" onClick={() => requestSort('id')}>ID <ArrowUpDown size={14} className="inline" /></th>
-              <th className="p-2 text-sm cursor-pointer" onClick={() => requestSort('name')}>Nombre <ArrowUpDown size={14} className="inline" /></th>
-              <th className="p-2 text-sm">Descripción</th>
-              <th className="p-2 text-sm cursor-pointer" onClick={() => requestSort('stock')}>Stock <ArrowUpDown size={14} className="inline" /></th>
-              <th className="p-2 text-sm">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentItems.map((product) => (
-              <tr key={product.id} className="border-b border-gray-100">
-                <td className="p-2 text-sm">{product.id}</td>
-                <td className="p-2 text-sm">{product.name}</td>
-                <td className="p-2 text-sm">{product.description}</td>
-                <td className="p-2 text-sm">{product.stock}</td>
-                <td className="p-2 flex gap-3 items-center">
-                  <Link href={`/dashboard/products/history/${product.id}`} className="text-purple-600 hover:underline text-sm">Ver Historial</Link>
-                  <form action={async () => { await unarchiveProduct(product.id); }} className="flex items-center">
-                    <button type="submit" className="text-green-600 hover:underline text-sm">Desarchivar</button>
-                  </form>
-                  <button 
-                    onClick={() => setProductToDelete(product)}
-                    title="esto va a borrar el producto definitivamente de la base de datos"
-                    className="text-red-600 hover:text-red-800 flex items-center gap-1 text-sm group relative"
-                  >
-                    <Trash2 size={16} />
-                    <span className="hover:underline">Eliminar definitivamente</span>
-                  </button>
-                </td>
+      <div className="card overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-[var(--bg-app)] border-b border-[var(--border)]">
+                <th className="py-2 px-4 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] cursor-pointer" onClick={() => requestSort('id')}>
+                  <div className="flex items-center gap-1.5">ID <ArrowUpDown size={12} /></div>
+                </th>
+                <th className="py-2 px-4 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] cursor-pointer" onClick={() => requestSort('name')}>
+                  <div className="flex items-center gap-1.5">Producto <ArrowUpDown size={12} /></div>
+                </th>
+                <th className="py-2 px-4 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">Descripción</th>
+                <th className="py-2 px-4 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] text-right">Stock</th>
+                <th className="py-2 px-4 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] text-center">Acciones</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+            </thead>
+            <tbody className="divide-y divide-[var(--border)]">
+              {currentItems.length > 0 ? (
+                currentItems.map((product) => (
+                  <tr key={product.id} className="hover:bg-[var(--bg-app)] transition-colors group">
+                    <td className="py-2 px-4 text-sm text-[var(--text-muted)]">#{product.id}</td>
+                    <td className="py-2 px-4 text-sm font-semibold text-[var(--text-main)]">{product.name}</td>
+                    <td className="py-2 px-4 text-sm text-[var(--text-muted)] max-w-xs truncate">{product.description || "-"}</td>
+                    <td className="py-2 px-4 text-sm font-bold text-right text-[var(--text-muted)]">{product.stock}</td>
+                    <td className="py-2 px-4 text-center">
+                      <div className="flex justify-center gap-2">
+                        <Link href={`/dashboard/products/history/${product.id}`} className="text-[var(--text-muted)] hover:text-purple-600" title="Ver Historial"><History size={16} /></Link>
+                        <form action={async () => { await unarchiveProduct(product.id); }} className="inline">
+                          <button type="submit" className="text-[var(--text-muted)] hover:text-green-600" title="Desarchivar"><RotateCcw size={16} /></button>
+                        </form>
+                        <button onClick={() => setProductToDelete(product)} className="text-[var(--text-muted)] hover:text-[var(--accent-danger)]" title="Eliminar"><Trash2 size={16} /></button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} className="p-8 text-center text-sm text-[var(--text-muted)] italic">
+                    Sin resultados.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+        <div className="py-2 px-4 border-t border-[var(--border)] bg-[var(--bg-app)]/50">
+          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+        </div>
       </div>
 
       {/* Confirmation Modal */}
@@ -141,7 +159,7 @@ export default function ArchivedClient({ initialProducts }: { initialProducts: a
               </button>
               <button 
                 onClick={handleDelete}
-                className="px-4 py-2 text-sm font-medium bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 transition-colors shadow-sm"
+                className="px-4 py-2 text-sm font-medium bg-[var(--accent-danger)] text-white rounded-md hover:opacity-90 disabled:opacity-50 transition-colors shadow-sm"
                 disabled={isPending}
               >
                 {isPending ? "Eliminando..." : "Sí, eliminar definitivamente"}

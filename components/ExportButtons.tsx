@@ -4,6 +4,7 @@ import { useState } from "react";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { FileSpreadsheet, FileText } from "lucide-react";
 
 export function ExportButtons({ data, type = 'stock' }: { data: any[], type?: string }) {
   const exportExcel = () => {
@@ -40,9 +41,19 @@ export function ExportButtons({ data, type = 'stock' }: { data: any[], type?: st
   };
 
   return (
-    <div className="flex gap-2">
-      <button onClick={exportExcel} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">Exportar Excel</button>
-      <button onClick={exportPDF} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">Exportar PDF</button>
+    <div className="flex gap-1.5">
+      <button 
+        onClick={exportExcel} 
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[var(--border)] text-[var(--text-main)] rounded-md hover:bg-[var(--bg-app)] transition-all text-xs font-semibold shadow-sm"
+      >
+        <FileSpreadsheet size={14} className="text-green-600" /> Excel
+      </button>
+      <button 
+        onClick={exportPDF} 
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[var(--border)] text-[var(--text-main)] rounded-md hover:bg-[var(--bg-app)] transition-all text-xs font-semibold shadow-sm"
+      >
+        <FileText size={14} className="text-red-600" /> PDF
+      </button>
     </div>
   );
 }
